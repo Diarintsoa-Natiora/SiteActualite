@@ -1,0 +1,5 @@
+- creer une site actualite comme Le monde
+- mampiasa tini docs : mampiditra am iny le front office
+- omena an ramose:
+  -> google gorm
+  -> .zip
