@@ -4,5 +4,16 @@ RewriteEngine On
 # URL SEO test: /actualites/slug-123-5.html
 RewriteRule ^actualites/([a-z0-9-]+)-([0-9]+)-([0-9]+)\.html$ pages/article.php?slug=$1&id=$2&idcat=$3 [L,QSA,NC]
 
+# Page d'inscription : /inscription
+RewriteRule ^inscription$ pages/register.php [L,QSA,NC]
+
+# Connexion / déconnexion
+RewriteRule ^connexion$ pages/login.php [L,QSA,NC]
+RewriteRule ^deconnexion$ pages/logout.php [L,QSA,NC]
+
+# Espace utilisateur et site public
+RewriteRule ^bienvenue$ pages/welcome.php [L,QSA,NC]
+RewriteRule ^site$ pages/site.php [L,QSA,NC]
+
 # Fallback to home page
 RewriteRule ^$ pages/home.php [L]
