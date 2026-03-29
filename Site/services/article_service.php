@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../helpers/slug.php';
+require_once __DIR__ . '/../helpers/url.php';
 
 function articleFormDefaults(): array
 {
@@ -115,6 +116,7 @@ function handleArticleCreation(array $input, array $author): array
                 'title' => $data['title'],
                 'slug' => $slug,
                 'published_at' => $publishedAt,
+                'url' => getUrl($slug, (int) $newId, 1),
             ];
 
             $data = articleFormDefaults();
