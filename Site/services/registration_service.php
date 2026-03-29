@@ -57,7 +57,7 @@ function validateRegistrationInput(array $input): array
 function handleRegistration(array $input): array
 {
     [$data, $errors] = validateRegistrationInput($input);
-    $successMessage = '';
+    $createdUser = null;
 
     if (!$errors) {
         try {
@@ -67,9 +67,14 @@ function handleRegistration(array $input): array
                 $errors[] = 'Cette adresse email est déjà utilisée.';
             } else {
                 $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-                createUser($connection, $data['name'], $data['email'], $hashedPassword);
+                $newUserId = createUser($connection, $data['name'], $data['email'], $hashedPassword);
 
-                $successMessage = 'Compte créé avec succès. Vous pouvez maintenant vous connecter.';
+                $freshUser = findUserById($connection, (int) $newUserId);
+                if ($freshUser) {
+                    unset($freshUser['password']);
+                    $createdUser = $freshUser;
+                }
+
                 $data = registrationFormDefaults();
             }
         } catch (Throwable $e) {
@@ -81,5 +86,5 @@ function handleRegistration(array $input): array
     $data['password'] = '';
     $data['confirm_password'] = '';
 
-    return [$data, $errors, $successMessage];
+    return [$data, $errors, $createdUser];
 }

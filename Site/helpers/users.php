@@ -52,3 +52,21 @@ function findUserByEmail(mysqli $connection, string $email): ?array
 
     return $user ?: null;
 }
+
+/**
+ * Récupère un utilisateur par identifiant.
+ */
+function findUserById(mysqli $connection, int $userId): ?array
+{
+    $query = 'SELECT id, name, email, password, role FROM users WHERE id = ? LIMIT 1';
+    $stmt = $connection->prepare($query);
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $user = $result ? $result->fetch_assoc() : null;
+
+    $stmt->close();
+
+    return $user ?: null;
+}

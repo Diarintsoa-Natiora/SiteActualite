@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 session_start();
@@ -10,8 +9,13 @@ header('Content-Type: text/html; charset=utf-8');
 
 $formData = loginFormDefaults();
 $errors = [];
-$successMessage = '';
 $currentUser = $_SESSION['user'] ?? null;
+$redirectParam = $_GET['redirect'] ?? ($_POST['redirect'] ?? '');
+$flashSuccess = $_SESSION['flash_success'] ?? '';
+unset($_SESSION['flash_success']);
+$flashError = $_SESSION['flash_error'] ?? '';
+unset($_SESSION['flash_error']);
+$redirectTarget = $redirectParam !== '' ? '/' . ltrim($redirectParam, '/') : '/bienvenue';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     [$formData, $errors, $user] = handleLogin($_POST);
@@ -23,8 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email' => $user['email'],
             'role' => $user['role'],
         ];
-        $currentUser = $_SESSION['user'];
-        $successMessage = 'Connexion réussie. Vous êtes maintenant connecté.';
+        $_SESSION['flash_success'] = 'Ravi de vous revoir ' . $user['name'] . '.';
+        header('Location: ' . $redirectTarget);
+        exit;
     }
 }
 ?>
@@ -34,112 +39,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 1rem;
-            background-color: #f5f5f5;
-        }
-        form {
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            display: block;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-        }
-        input {
-            width: 100%;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 0.6rem 1.2rem;
-            background-color: #111827;
-            border: none;
-            color: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .messages {
-            margin-bottom: 1rem;
-        }
-        .messages ul {
-            margin: 0;
-            padding-left: 1.25rem;
-        }
-        .error {
-            color: #b91c1c;
-        }
-        .success {
-            color: #15803d;
-        }
-        .links {
-            margin-top: 1rem;
-        }
-        .links a {
-            color: #2563eb;
-        }
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 999px;
-            background-color: #e0e7ff;
-            color: #1e3a8a;
-            font-size: 0.85rem;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/app.css">
 </head>
-<body>
-    <h1>Connexion</h1>
+<body class="page page--gradient">
+<header class="masthead">
+    <div class="brand">Iran Focus</div>
+    <nav class="nav">
+        <a href="/" class="nav__link">Accueil</a>
+        <a href="/site" class="nav__link">Site</a>
+        <a href="/inscription" class="nav__link">Inscription</a>
+    </nav>
+</header>
 
-    <?php if ($currentUser): ?>
-        <p class="badge">Connecté en tant que <?= htmlspecialchars($currentUser['name'], ENT_QUOTES, 'UTF-8') ?></p>
-    <?php endif; ?>
+<main class="auth-grid">
+    <section class="card auth-card">
+        <p class="eyebrow">Étape 2 · Connexion</p>
+        <h1 class="card__title">Se connecter</h1>
+        <p class="card__subtitle">Accédez à l'espace rédacteur, aux brouillons et aux statistiques.</p>
 
-    <?php if ($errors): ?>
-        <div class="messages error">
-            <ul>
-                <?php foreach ($errors as $error): ?>
-                    <li><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
-
-    <?php if ($successMessage): ?>
-        <p class="messages success"><?= htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') ?></p>
-    <?php endif; ?>
-
-    <form method="post" action="">
-        <label for="email">Email</label>
-        <input
-            type="email"
-            id="email"
-            name="email"
-            value="<?= htmlspecialchars($formData['email'], ENT_QUOTES, 'UTF-8') ?>"
-            required
-        >
-
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit">Se connecter</button>
-    </form>
-
-    <div class="links">
-        <p><a href="/inscription">Créer un compte</a></p>
-        <p><a href="/">Retour à l'accueil</a></p>
         <?php if ($currentUser): ?>
-            <p><a href="/deconnexion">Se déconnecter</a></p>
+            <div class="alert alert--info">
+                Connecté en tant que <?= htmlspecialchars($currentUser['name'], ENT_QUOTES, 'UTF-8') ?>.
+                <a href="<?= htmlspecialchars($redirectTarget, ENT_QUOTES, 'UTF-8') ?>">Continuer</a>
+            </div>
         <?php endif; ?>
-    </div>
+
+        <?php if ($flashSuccess): ?>
+            <div class="alert alert--success"><?= htmlspecialchars($flashSuccess, ENT_QUOTES, 'UTF-8') ?></div>
+        <?php endif; ?>
+
+        <?php if ($flashError): ?>
+            <div class="alert alert--error"><?= htmlspecialchars($flashError, ENT_QUOTES, 'UTF-8') ?></div>
+        <?php endif; ?>
+
+        <?php if ($errors): ?>
+            <div class="alert alert--error">
+                <ul>
+                    <?php foreach ($errors as $error): ?>
+                        <li><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <form method="post" class="form">
+            <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirectParam, ENT_QUOTES, 'UTF-8') ?>">
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="<?= htmlspecialchars($formData['email'], ENT_QUOTES, 'UTF-8') ?>"
+                required
+            >
+
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" class="btn btn--primary">Se connecter</button>
+        </form>
+
+        <p class="switch-link">Pas encore de compte ? <a href="/inscription">Créer mon accès</a></p>
+    </section>
+
+    <aside class="card auth-aside">
+        <h2>Workflow</h2>
+        <ol>
+            <li>Saisie via TinyDocs</li>
+            <li>Validation éditoriale</li>
+            <li>Publication SEO</li>
+        </ol>
+        <p class="muted">Besoin d'un rôle supérieur ? Contactez l'admin.</p>
+    </aside>
+</main>
 </body>
 </html>
