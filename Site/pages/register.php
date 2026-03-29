@@ -41,7 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <nav class="nav">
         <a href="/" class="nav__link">Accueil</a>
         <a href="/site" class="nav__link">Site</a>
-        <a href="/connexion" class="nav__link nav__link--accent">Connexion</a>
+        <?php if ($currentUser): ?>
+            <a href="/redaction" class="nav__link">Rédaction</a>
+            <a href="/deconnexion" class="nav__link nav__link--accent">Déconnexion</a>
+        <?php else: ?>
+            <a href="/connexion" class="nav__link nav__link--accent">Connexion</a>
+        <?php endif; ?>
     </nav>
 </header>
 

@@ -30,6 +30,7 @@ unset($_SESSION['flash_error']);
 <header class="masthead masthead--solid">
     <div class="brand">Iran Focus</div>
     <nav class="nav">
+        <a href="/redaction" class="nav__link">Rédaction</a>
         <a href="/site" class="nav__link">Site</a>
         <a href="/" class="nav__link">Accueil</a>
         <a href="/deconnexion" class="nav__link nav__link--accent">Déconnexion</a>
@@ -42,8 +43,9 @@ unset($_SESSION['flash_error']);
         <h1><?= htmlspecialchars($currentUser['name'], ENT_QUOTES, 'UTF-8') ?></h1>
         <p class="card__subtitle">Rôle actuel : <strong><?= htmlspecialchars($currentUser['role'], ENT_QUOTES, 'UTF-8') ?></strong></p>
         <div class="hero-actions">
-            <a class="btn btn--primary" href="/site">Voir le site</a>
-            <a class="btn" href="/inscription">Inviter un collègue</a>
+            <a class="btn btn--primary" href="/redaction">Créer un article</a>
+            <a class="btn" href="/site">Voir le site</a>
+            <a class="btn btn--ghost" href="/inscription">Inviter un collègue</a>
         </div>
     </section>
 

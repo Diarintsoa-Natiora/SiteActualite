@@ -21,10 +21,12 @@ $currentUser = $_SESSION['user'] ?? null;
     <nav class="nav">
         <a href="/" class="nav__link">Accueil</a>
         <a href="/site" class="nav__link nav__link--active">Site</a>
-        <a href="/connexion" class="nav__link">Connexion</a>
         <?php if ($currentUser): ?>
+            <a href="/redaction" class="nav__link">Rédaction</a>
             <a href="/bienvenue" class="nav__link">Espace <?= htmlspecialchars($currentUser['role'], ENT_QUOTES, 'UTF-8') ?></a>
+            <a href="/deconnexion" class="nav__link nav__link--accent">Déconnexion</a>
         <?php else: ?>
+            <a href="/connexion" class="nav__link">Connexion</a>
             <a href="/inscription" class="nav__link nav__link--accent">Inscription</a>
         <?php endif; ?>
     </nav>
@@ -37,8 +39,13 @@ $currentUser = $_SESSION['user'] ?? null;
             <h1>Tensions croissantes à la frontière iranienne</h1>
             <p>Suivez nos envoyés pour décrypter les enjeux diplomatiques, économiques et humanitaires du conflit.</p>
             <div class="hero-actions">
-                <a class="btn btn--primary" href="/connexion">Lire les analyses complètes</a>
-                <a class="btn" href="/inscription">Devenir contributeur</a>
+                <?php if ($currentUser): ?>
+                    <a class="btn btn--primary" href="/redaction">Écrire un article</a>
+                    <a class="btn" href="/bienvenue">Tableau de bord</a>
+                <?php else: ?>
+                    <a class="btn btn--primary" href="/connexion">Lire les analyses complètes</a>
+                    <a class="btn" href="/inscription">Devenir contributeur</a>
+                <?php endif; ?>
             </div>
         </div>
     </section>

@@ -21,8 +21,14 @@ $currentUser = $_SESSION['user'] ?? null;
     <nav class="nav">
         <a href="/" class="nav__link nav__link--active">Accueil</a>
         <a href="/site" class="nav__link">Site</a>
-        <a href="/connexion" class="nav__link">Connexion</a>
-        <a href="/inscription" class="nav__link nav__link--accent">Inscription</a>
+        <?php if ($currentUser): ?>
+            <a href="/redaction" class="nav__link">Rédaction</a>
+            <a href="/bienvenue" class="nav__link">Espace <?= htmlspecialchars($currentUser['role'], ENT_QUOTES, 'UTF-8') ?></a>
+            <a href="/deconnexion" class="nav__link nav__link--accent">Déconnexion</a>
+        <?php else: ?>
+            <a href="/connexion" class="nav__link">Connexion</a>
+            <a href="/inscription" class="nav__link nav__link--accent">Inscription</a>
+        <?php endif; ?>
     </nav>
 </header>
 
@@ -33,9 +39,15 @@ $currentUser = $_SESSION['user'] ?? null;
             <h1>Construisez un média SEO fiable</h1>
             <p>Workflow complet : TinyDocs, MySQL, URLs réécrites et hébergement Docker prêt pour la démo.</p>
             <div class="hero-actions">
-                <a class="btn btn--primary" href="/connexion">Se connecter</a>
-                <a class="btn" href="/inscription">Créer un compte</a>
-                <a class="btn btn--ghost" href="/site">Voir le site</a>
+                <?php if ($currentUser): ?>
+                    <a class="btn btn--primary" href="/redaction">Écrire un article</a>
+                    <a class="btn" href="/site">Voir le site</a>
+                    <a class="btn btn--ghost" href="/bienvenue">Tableau de bord</a>
+                <?php else: ?>
+                    <a class="btn btn--primary" href="/connexion">Se connecter</a>
+                    <a class="btn" href="/inscription">Créer un compte</a>
+                    <a class="btn btn--ghost" href="/site">Voir le site</a>
+                <?php endif; ?>
             </div>
         </div>
         <div class="hero__status">
