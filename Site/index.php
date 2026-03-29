@@ -33,5 +33,6 @@ try {
 
     <p><a href="/pages/home.php">Aller sur home.php</a></p>
     <p><a href="/actualites/test-seo-1-1.html">Tester URL rewrite</a></p>
+    <p><a href="/pages/register.php">Créer un compte</a> (URL SEO : <a href="/inscription">/inscription</a>)</p>
 </body>
 </html>

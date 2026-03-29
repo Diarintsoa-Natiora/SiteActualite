@@ -11,5 +11,6 @@ header('Content-Type: text/html; charset=utf-8');
 <body>
     <h1>home.php</h1>
     <p>Le conteneur PHP/Apache fonctionne.</p>
+    <p><a href="/inscription">Accéder à la page d'inscription</a></p>
 </body>
 </html>
