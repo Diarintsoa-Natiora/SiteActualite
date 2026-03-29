@@ -7,5 +7,9 @@ RewriteRule ^actualites/([a-z0-9-]+)-([0-9]+)-([0-9]+)\.html$ pages/article.php?
 # Page d'inscription : /inscription
 RewriteRule ^inscription$ pages/register.php [L,QSA,NC]
 
+# Connexion / déconnexion
+RewriteRule ^connexion$ pages/login.php [L,QSA,NC]
+RewriteRule ^deconnexion$ pages/logout.php [L,QSA,NC]
+
 # Fallback to home page
 RewriteRule ^$ pages/home.php [L]

@@ -2,16 +2,30 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../services/registration_service.php';
+session_start();
+
+require_once __DIR__ . '/../services/login_service.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
-$formData = registrationFormDefaults();
+$formData = loginFormDefaults();
 $errors = [];
 $successMessage = '';
+$currentUser = $_SESSION['user'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    [$formData, $errors, $successMessage] = handleRegistration($_POST);
+    [$formData, $errors, $user] = handleLogin($_POST);
+
+    if (!$errors && $user) {
+        $_SESSION['user'] = [
+            'id' => (int) $user['id'],
+            'name' => $user['name'],
+            'email' => $user['email'],
+            'role' => $user['role'],
+        ];
+        $currentUser = $_SESSION['user'];
+        $successMessage = 'Connexion réussie. Vous êtes maintenant connecté.';
+    }
 }
 ?>
 <!doctype html>
@@ -19,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription</title>
+    <title>Connexion</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -73,10 +87,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .links a {
             color: #2563eb;
         }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            background-color: #e0e7ff;
+            color: #1e3a8a;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
-    <h1>Créer un compte</h1>
+    <h1>Connexion</h1>
+
+    <?php if ($currentUser): ?>
+        <p class="badge">Connecté en tant que <?= htmlspecialchars($currentUser['name'], ENT_QUOTES, 'UTF-8') ?></p>
+    <?php endif; ?>
 
     <?php if ($errors): ?>
         <div class="messages error">
@@ -93,15 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post" action="">
-        <label for="name">Nom complet</label>
-        <input
-            type="text"
-            id="name"
-            name="name"
-            value="<?= htmlspecialchars($formData['name'], ENT_QUOTES, 'UTF-8') ?>"
-            required
-        >
-
         <label for="email">Email</label>
         <input
             type="email"
@@ -114,15 +131,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="password">Mot de passe</label>
         <input type="password" id="password" name="password" required>
 
-        <label for="confirm_password">Confirmer le mot de passe</label>
-        <input type="password" id="confirm_password" name="confirm_password" required>
-
-        <button type="submit">S'inscrire</button>
+        <button type="submit">Se connecter</button>
     </form>
 
     <div class="links">
+        <p><a href="/inscription">Créer un compte</a></p>
         <p><a href="/">Retour à l'accueil</a></p>
-        <p>Déjà un compte ? <a href="/connexion">Connectez-vous</a></p>
+        <?php if ($currentUser): ?>
+            <p><a href="/deconnexion">Se déconnecter</a></p>
+        <?php endif; ?>
     </div>
 </body>
 </html>

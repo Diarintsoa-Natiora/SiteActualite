@@ -1,8 +1,11 @@
 <?php
+session_start();
+
 require_once __DIR__ . '/config/db.php';
 
 $connectionOk = false;
 $errorMessage = '';
+$currentUser = $_SESSION['user'] ?? null;
 
 try {
     $mysqli = getDbConnection();
@@ -34,5 +37,14 @@ try {
     <p><a href="/pages/home.php">Aller sur home.php</a></p>
     <p><a href="/actualites/test-seo-1-1.html">Tester URL rewrite</a></p>
     <p><a href="/pages/register.php">Créer un compte</a> (URL SEO : <a href="/inscription">/inscription</a>)</p>
+    <p><a href="/pages/login.php">Se connecter</a> (URL SEO : <a href="/connexion">/connexion</a>)</p>
+
+    <?php if ($currentUser): ?>
+        <p>Connecté en tant que <strong><?= htmlspecialchars($currentUser['name'], ENT_QUOTES, 'UTF-8') ?></strong>
+            (<a href="/deconnexion">Se déconnecter</a>)
+        </p>
+    <?php else: ?>
+        <p>Aucun utilisateur connecté actuellement.</p>
+    <?php endif; ?>
 </body>
 </html>

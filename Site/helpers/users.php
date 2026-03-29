@@ -34,3 +34,21 @@ function createUser(mysqli $connection, string $name, string $email, string $has
 
     return $newId;
 }
+
+/**
+ * Récupère un utilisateur par son email ou retourne null si absent.
+ */
+function findUserByEmail(mysqli $connection, string $email): ?array
+{
+    $query = 'SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1';
+    $stmt = $connection->prepare($query);
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $user = $result ? $result->fetch_assoc() : null;
+
+    $stmt->close();
+
+    return $user ?: null;
+}
