@@ -7,14 +7,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE media (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    file_path VARCHAR(255) NOT NULL,
-    alt_text VARCHAR(255),
-    mime_type VARCHAR(100),
-    size INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+
 
 CREATE TABLE articles (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -27,9 +20,8 @@ CREATE TABLE articles (
     meta_title VARCHAR(255),
     meta_description TEXT,
 
-    featured_image_id INT,
 
-    status ENUM('draft','published') DEFAULT 'draft',
+    status ENUM('draft','published','delete') DEFAULT 'draft',
 
     views INT DEFAULT 0,
 
@@ -39,9 +31,20 @@ CREATE TABLE articles (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (author_id) REFERENCES users(id),
-    FOREIGN KEY (featured_image_id) REFERENCES media(id)
+    FOREIGN KEY (author_id) REFERENCES users(id)
 );
+
+CREATE TABLE media (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    file_path VARCHAR(255) NOT NULL,
+    alt_text VARCHAR(255),
+    mime_type VARCHAR(100),
+    size INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_article INT ,
+    FOREIGN KEY (id_article) REFERENCES articles(id)
+);
+
 
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,

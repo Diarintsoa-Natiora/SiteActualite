@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <section class="card">
-        <form method="post" class="form">
+        <form method="post" class="form" enctype="multipart/form-data">
             <label for="title">Titre</label>
             <input type="text" id="title" name="title" value="<?= htmlspecialchars($formData['title'], ENT_QUOTES, 'UTF-8') ?>" required>
 
@@ -102,6 +102,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div>
                     <label for="meta_description">Meta description</label>
                     <input type="text" id="meta_description" name="meta_description" value="<?= htmlspecialchars($formData['meta_description'], ENT_QUOTES, 'UTF-8') ?>" placeholder="Optionnel (160 caractères)">
+                </div>
+                <div>
+                    <label for="cover_image">Images de couverture</label>
+                    <input type="file" id="cover_image" name="cover_image" value="<?= htmlspecialchars($formData['meta_description'], ENT_QUOTES, 'UTF-8') ?>" placeholder="optionelle">
                 </div>
             </div>
 
