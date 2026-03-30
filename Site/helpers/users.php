@@ -40,7 +40,7 @@ function createUser(mysqli $connection, string $name, string $email, string $has
  */
 function findUserByEmail(mysqli $connection, string $email): ?array
 {
-    $query = 'SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1';
+    $query = 'SELECT id, name, email, password, role, is_hashed FROM users WHERE email = ? LIMIT 1';
     $stmt = $connection->prepare($query);
     $stmt->bind_param('s', $email);
     $stmt->execute();
@@ -58,7 +58,7 @@ function findUserByEmail(mysqli $connection, string $email): ?array
  */
 function findUserById(mysqli $connection, int $userId): ?array
 {
-    $query = 'SELECT id, name, email, password, role FROM users WHERE id = ? LIMIT 1';
+    $query = 'SELECT id, name, email, password, role, is_hashed FROM users WHERE id = ? LIMIT 1';
     $stmt = $connection->prepare($query);
     $stmt->bind_param('i', $userId);
     $stmt->execute();
@@ -69,4 +69,13 @@ function findUserById(mysqli $connection, int $userId): ?array
     $stmt->close();
 
     return $user ?: null;
+}
+
+function upgradeLegacyPassword(mysqli $connection, int $userId, string $plainPassword): void
+{
+    $newHash = password_hash($plainPassword, PASSWORD_DEFAULT);
+    $stmt = $connection->prepare('UPDATE users SET password = ?, is_hashed = 1 WHERE id = ?');
+    $stmt->bind_param('si', $newHash, $userId);
+    $stmt->execute();
+    $stmt->close();
 }

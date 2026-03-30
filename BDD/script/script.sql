@@ -4,6 +4,7 @@ CREATE TABLE users (
     email VARCHAR(150) UNIQUE,
     password VARCHAR(255),
     role ENUM('admin','editor','writer') DEFAULT 'writer',
+    is_hashed BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

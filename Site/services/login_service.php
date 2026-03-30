@@ -43,11 +43,29 @@ function handleLogin(array $input): array
             $connection = getDbConnection();
             $user = findUserByEmail($connection, $data['email']);
 
-            if (!$user || !password_verify($data['password'], $user['password'])) {
+            if (!$user) {
                 $errors[] = 'Email ou mot de passe incorrect.';
-                $user = null;
             } else {
-                unset($user['password']);
+                $isHashed = array_key_exists('is_hashed', $user) ? (bool) $user['is_hashed'] : true;
+                $passwordMatches = false;
+
+                if ($isHashed) {
+                    $passwordMatches = password_verify($data['password'], $user['password']);
+                } else {
+                    $passwordMatches = hash_equals($user['password'], $data['password']);
+
+                    if ($passwordMatches) {
+                        upgradeLegacyPassword($connection, (int) $user['id'], $data['password']);
+                        $user['is_hashed'] = 1;
+                    }
+                }
+
+                if (!$passwordMatches) {
+                    $errors[] = 'Email ou mot de passe incorrect.';
+                    $user = null;
+                } else {
+                    unset($user['password']);
+                }
             }
         } catch (Throwable $e) {
             $errors[] = 'Erreur lors de la connexion : ' . $e->getMessage();
