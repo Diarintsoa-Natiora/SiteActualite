@@ -6,3 +6,5 @@
 - les fichiers `BDD/script/script.sql` (structure) et `BDD/data/data-natiora-2803203.sql` (donnees) sont injectes automatiquement dans `site_actualite` au premier demarrage du conteneur MySQL
 - pour rejouer l'initialisation, supprimer le volume `siteactualite_site_mysql_data` (`docker volume rm siteactualite_site_mysql_data`) puis relancer `docker compose up`
 - commande utile pour se connecter : `docker exec -it siteactualite-db mysql -u root -proot site_actualite`
+
+
