@@ -20,7 +20,16 @@ function getPublishedArticles(int $page, int $perPage = 6): array
     $totalItems = (int) ($totalRow['total'] ?? 0);
 
     $stmt = $connection->prepare(
-        "SELECT a.id, a.title, a.slug, a.meta_title, a.meta_description, a.content, a.published_at, u.name AS author_name
+        "SELECT a.id,
+                a.title,
+                a.slug,
+                a.meta_title,
+                a.meta_description,
+                a.content,
+                a.published_at,
+                u.name AS author_name,
+                (SELECT m.file_path FROM media m WHERE m.id_article = a.id ORDER BY m.id DESC LIMIT 1) AS cover_image_path,
+                (SELECT m.alt_text FROM media m WHERE m.id_article = a.id ORDER BY m.id DESC LIMIT 1) AS cover_image_alt
          FROM articles a
          LEFT JOIN users u ON u.id = a.author_id
          WHERE a.status = 'published'
@@ -59,7 +68,16 @@ function findPublishedArticle(int $id, string $slug): ?array
 
     $connection = getDbConnection();
     $stmt = $connection->prepare(
-        "SELECT a.id, a.title, a.slug, a.meta_title, a.meta_description, a.content, a.published_at, u.name AS author_name
+        "SELECT a.id,
+                a.title,
+                a.slug,
+                a.meta_title,
+                a.meta_description,
+                a.content,
+                a.published_at,
+                u.name AS author_name,
+                (SELECT m.file_path FROM media m WHERE m.id_article = a.id ORDER BY m.id DESC LIMIT 1) AS cover_image_path,
+                (SELECT m.alt_text FROM media m WHERE m.id_article = a.id ORDER BY m.id DESC LIMIT 1) AS cover_image_alt
          FROM articles a
          LEFT JOIN users u ON u.id = a.author_id
          WHERE a.status = 'published' AND a.id = ? AND a.slug = ?

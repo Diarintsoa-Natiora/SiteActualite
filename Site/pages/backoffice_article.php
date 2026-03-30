@@ -105,7 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div>
                     <label for="cover_image">Images de couverture</label>
-                    <input type="file" id="cover_image" name="cover_image" value="<?= htmlspecialchars($formData['meta_description'], ENT_QUOTES, 'UTF-8') ?>" placeholder="optionelle">
+                    <input type="file" id="cover_image" name="cover_image" accept="image/*">
+                </div>
+                <div>
+                    <label for="cover_alt">Texte alternatif</label>
+                    <input type="text" id="cover_alt" name="cover_alt" value="<?= htmlspecialchars($formData['cover_alt'], ENT_QUOTES, 'UTF-8') ?>" placeholder="Décrivez l'image">
                 </div>
             </div>
 

@@ -41,6 +41,17 @@ function formatArticleDate(?string $date): string
 
     return (new DateTimeImmutable($date))->format('d M Y · H\hi');
 }
+
+function articleCoverAlt(array $article): string
+{
+    $alt = $article['cover_image_alt'] ?? '';
+
+    if ($alt === '' && isset($article['title'])) {
+        $alt = $article['title'];
+    }
+
+    return $alt;
+}
 ?>
 <!doctype html>
 <html lang="fr">
@@ -71,7 +82,7 @@ function formatArticleDate(?string $date): string
 <main class="site-layout">
     <?php if ($featuredArticle): ?>
         <section class="hero hero--site">
-            <div>
+            <div class="hero__content">
                 <p class="eyebrow">À la une · <?= formatArticleDate($featuredArticle['published_at']) ?></p>
                 <h1><?= htmlspecialchars($featuredArticle['title'], ENT_QUOTES, 'UTF-8') ?></h1>
                 <p><?= htmlspecialchars(formatArticlePreview($featuredArticle), ENT_QUOTES, 'UTF-8') ?></p>
@@ -84,10 +95,15 @@ function formatArticleDate(?string $date): string
                     <?php endif; ?>
                 </div>
             </div>
+            <?php if (!empty($featuredArticle['cover_image_path'])): ?>
+                <div class="hero__media">
+                    <img src="<?= htmlspecialchars($featuredArticle['cover_image_path'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars(articleCoverAlt($featuredArticle), ENT_QUOTES, 'UTF-8') ?>">
+                </div>
+            <?php endif; ?>
         </section>
     <?php else: ?>
         <section class="hero hero--site">
-            <div>
+            <div class="hero__content">
                 <p class="eyebrow">Aucun article</p>
                 <h1>Publiez votre première analyse</h1>
                 <p>Les articles publiés apparaîtront ici automatiquement avec leur meta description.</p>
@@ -102,6 +118,9 @@ function formatArticleDate(?string $date): string
         <section class="grid grid--three">
             <?php foreach ($listingArticles as $article): ?>
                 <article class="card story">
+                    <?php if (!empty($article['cover_image_path'])): ?>
+                        <img class="story__image" src="<?= htmlspecialchars($article['cover_image_path'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars(articleCoverAlt($article), ENT_QUOTES, 'UTF-8') ?>">
+                    <?php endif; ?>
                     <p class="tag">Publié le <?= htmlspecialchars(formatArticleDate($article['published_at']), ENT_QUOTES, 'UTF-8') ?></p>
                     <h2><a href="<?= htmlspecialchars($article['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?></a></h2>
                     <p><?= htmlspecialchars(formatArticlePreview($article), ENT_QUOTES, 'UTF-8') ?></p>
