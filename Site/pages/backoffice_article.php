@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <section class="card">
             <div class="alert alert--success">
                 Article « <?= htmlspecialchars($createdArticle['title'], ENT_QUOTES, 'UTF-8') ?> » publié.
-                URL SEO : <a href="/actualites/<?= htmlspecialchars($createdArticle['slug'], ENT_QUOTES, 'UTF-8') ?>-<?= $createdArticle['id'] ?>-1.html">/actualites/<?= htmlspecialchars($createdArticle['slug'], ENT_QUOTES, 'UTF-8') ?>-<?= $createdArticle['id'] ?>-1.html</a>
+                URL SEO : <a href="<?= htmlspecialchars($createdArticle['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($createdArticle['url'], ENT_QUOTES, 'UTF-8') ?></a>
             </div>
         </section>
     <?php endif; ?>
