@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   web:
     build:
@@ -11,7 +13,8 @@ services:
     volumes:
       - ./:/var/www/html
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.0
@@ -26,7 +29,15 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - mysql_data:/var/lib/mysql
-      - ../BDD/script/script.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ../BDD/script/script.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ../BDD/data/data-natiora-2803203.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD --silent
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mysql_data:
