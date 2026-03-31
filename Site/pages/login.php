@@ -94,12 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 type="email"
                 id="email"
                 name="email"
-                value="<?= htmlspecialchars($formData['email'], ENT_QUOTES, 'UTF-8') ?>"
+                value="admin@mail.com"
                 required
             >
 
             <label for="password">Mot de passe</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" value="hashed_password" required>
 
             <button type="submit" class="btn btn--primary">Se connecter</button>
         </form>
