@@ -47,6 +47,6 @@ INSERT INTO articles (id, title, slug, content, meta_title, meta_description, st
 -- MEDIA
 -- =========================
 INSERT INTO media (file_path, alt_text, mime_type, size, id_article) VALUES
-('/assets/upload/ArmadaAmericain.png', 'Pont d''envol du porte-avions americain', 'image/png', 220230, 1),
-('/assets/upload/DegatIsrael.png', 'Secouristes israelien dans les ruines', 'image/png', 268229, 2),
-('/assets/upload/peupleIranien.png', 'Manifestants iraniens brandissant des portraits', 'image/png', 249331, 3);
+('/assets/upload/ArmadaAmericain.png', 'Armada americaine verrouille le detroit d''Ormuz', 'image/png', 220230, 1),
+('/assets/upload/DegatIsrael.png', 'Secours israeliens dans les degats des derniers raids', 'image/png', 268229, 2),
+('/assets/upload/peupleIranien.png', 'Peuple iranien mobilise pour soutenir l''effort de guerre', 'image/png', 249331, 3);
