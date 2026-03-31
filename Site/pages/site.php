@@ -100,7 +100,13 @@ $pagination = $feed['pagination'];
             </div>
             <?php if (!empty($featuredArticle['cover_image_path'])): ?>
                 <div class="hero__media">
-                    <img src="<?= htmlspecialchars($featuredArticle['cover_image_path'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars(articleCoverAlt($featuredArticle), ENT_QUOTES, 'UTF-8') ?>">
+                    <img
+                        src="<?= htmlspecialchars($featuredArticle['cover_image_path'], ENT_QUOTES, 'UTF-8') ?>"
+                        alt="<?= htmlspecialchars(articleCoverAlt($featuredArticle), ENT_QUOTES, 'UTF-8') ?>"
+                        loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                    >
                 </div>
             <?php endif; ?>
         </section>
@@ -122,7 +128,13 @@ $pagination = $feed['pagination'];
             <?php foreach ($listingArticles as $article): ?>
                 <article class="card story">
                     <?php if (!empty($article['cover_image_path'])): ?>
-                        <img class="story__image" src="<?= htmlspecialchars($article['cover_image_path'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars(articleCoverAlt($article), ENT_QUOTES, 'UTF-8') ?>">
+                        <img
+                            class="story__image"
+                            src="<?= htmlspecialchars($article['cover_image_path'], ENT_QUOTES, 'UTF-8') ?>"
+                            alt="<?= htmlspecialchars(articleCoverAlt($article), ENT_QUOTES, 'UTF-8') ?>"
+                            loading="lazy"
+                            decoding="async"
+                        >
                     <?php endif; ?>
                     <p class="tag">Publié le <?= htmlspecialchars(formatArticleDate($article['published_at']), ENT_QUOTES, 'UTF-8') ?></p>
                     <h2><a href="<?= htmlspecialchars($article['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?></a></h2>
@@ -153,7 +165,12 @@ $pagination = $feed['pagination'];
                         </div>
                         <?php if ($timelineImage !== ''): ?>
                             <span class="timeline__thumb">
-                                <img src="<?= htmlspecialchars($timelineImage, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($timelineAlt, ENT_QUOTES, 'UTF-8') ?>">
+                                <img
+                                    src="<?= htmlspecialchars($timelineImage, ENT_QUOTES, 'UTF-8') ?>"
+                                    alt="<?= htmlspecialchars($timelineAlt, ENT_QUOTES, 'UTF-8') ?>"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
                             </span>
                         <?php else: ?>
                             <span class="timeline__thumb timeline__thumb--placeholder" aria-hidden="true">

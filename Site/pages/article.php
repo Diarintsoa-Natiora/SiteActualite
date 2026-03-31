@@ -91,7 +91,12 @@ $articleDate = $article ? (new DateTimeImmutable($article['published_at']))->for
             <p class="muted">Par <?= htmlspecialchars($article['author_name'] ?: 'Rédaction', ENT_QUOTES, 'UTF-8') ?></p>
             <?php if (!empty($article['cover_image_path'])): ?>
                 <figure class="article-cover">
-                    <img src="<?= htmlspecialchars($article['cover_image_path'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($article['cover_image_alt'] ?: $article['title'], ENT_QUOTES, 'UTF-8') ?>">
+                    <img
+                        src="<?= htmlspecialchars($article['cover_image_path'], ENT_QUOTES, 'UTF-8') ?>"
+                        alt="<?= htmlspecialchars($article['cover_image_alt'] ?: $article['title'], ENT_QUOTES, 'UTF-8') ?>"
+                        loading="lazy"
+                        decoding="async"
+                    >
                     <?php if (!empty($article['cover_image_alt'])): ?>
                         <figcaption><?= htmlspecialchars($article['cover_image_alt'], ENT_QUOTES, 'UTF-8') ?></figcaption>
                     <?php endif; ?>

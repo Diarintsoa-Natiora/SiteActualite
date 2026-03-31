@@ -156,8 +156,8 @@ function handleArticleCreation(array $input, array $author, array $files = []): 
                     $connection,
                     $storedCover['public_path'],
                     $coverAlt,
-                    $coverImagePlan['mime_type'],
-                    $coverImagePlan['size'],
+                    $storedCover['mime_type'],
+                    $storedCover['size'],
                     (int) $newId
                 );
             }
@@ -262,9 +262,91 @@ function persistCoverImage(array $file, string $extension): array
         throw new RuntimeException('Impossible de sauvegarder l\'image téléchargée.');
     }
 
-    return [
+    $stored = [
         'public_path' => '/assets/upload/' . $filename,
         'absolute_path' => $destination,
+        'mime_type' => mime_content_type($destination) ?: 'application/octet-stream',
+        'size' => (int) (filesize($destination) ?: 0),
+    ];
+
+    $optimized = convertToWebpIfPossible($stored);
+
+    return $optimized ?? $stored;
+}
+
+function convertToWebpIfPossible(array $stored): ?array
+{
+    if (!function_exists('imagecreatefromstring') || !function_exists('imagewebp')) {
+        return null;
+    }
+
+    $sourcePath = $stored['absolute_path'] ?? '';
+    if (!is_file($sourcePath)) {
+        return null;
+    }
+
+    $info = getimagesize($sourcePath);
+    if (!$info || !isset($info[0], $info[1], $info['mime'])) {
+        return null;
+    }
+
+    [$width, $height] = [$info[0], $info[1]];
+    $mime = $info['mime'];
+
+    switch ($mime) {
+        case 'image/jpeg':
+            $image = @imagecreatefromjpeg($sourcePath);
+            break;
+        case 'image/png':
+            $image = @imagecreatefrompng($sourcePath);
+            break;
+        case 'image/gif':
+            $image = @imagecreatefromgif($sourcePath);
+            break;
+        case 'image/webp':
+            // Already WebP
+            return $stored;
+        default:
+            return null;
+    }
+
+    if (!$image) {
+        return null;
+    }
+
+    // Downscale large images to reduce weight
+    $maxWidth = 1600;
+    if ($width > $maxWidth) {
+        $scaleHeight = (int) round($height * ($maxWidth / $width));
+        $resized = imagescale($image, $maxWidth, $scaleHeight, IMG_BILINEAR_FIXED);
+        if ($resized) {
+            imagedestroy($image);
+            $image = $resized;
+        }
+    }
+
+    $webpPath = preg_replace('/\.[^.]+$/', '.webp', $sourcePath);
+    if (!imagewebp($image, $webpPath, 82)) {
+        imagedestroy($image);
+        return null;
+    }
+    imagedestroy($image);
+
+    $webpSize = (int) (filesize($webpPath) ?: 0);
+    if ($webpSize === 0) {
+        @unlink($webpPath);
+        return null;
+    }
+
+    // Replace original file with WebP
+    @unlink($sourcePath);
+    $publicPath = preg_replace('/\.[^.]+$/', '.webp', $stored['public_path'] ?? '');
+
+    return [
+        'public_path' => $publicPath,
+        'absolute_path' => $webpPath,
+        'mime_type' => 'image/webp',
+        'size' => $webpSize,
     ];
 }
 
@@ -432,8 +514,8 @@ function handleArticleUpdate(int $articleId, array $input, array $files = []): a
                     $connection,
                     $storedCover['public_path'],
                     $coverAlt,
-                    $coverImagePlan['mime_type'],
-                    $coverImagePlan['size'],
+                    $storedCover['mime_type'],
+                    $storedCover['size'],
                     $articleId
                 );
             } elseif ($existing && isset($existing['cover_media_id']) && $existing['cover_media_id']) {
