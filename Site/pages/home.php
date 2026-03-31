@@ -15,6 +15,9 @@ $currentUser = $_SESSION['user'] ?? null;
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Iran Focus · Accueil</title>
+	<meta name="description" content="Iran Focus : médias étudiants sur la guerre en Iran, articles SEO, workflow TinyDocs/MySQL/Docker. Accueil, site public, rédaction et comptes contributeurs.">
+	<meta name="robots" content="index, follow">
+	<link rel="canonical" href="http://localhost:8080/">
 	<link rel="stylesheet" href="<?= htmlspecialchars(stylesheetHref(), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="page page--gradient">
