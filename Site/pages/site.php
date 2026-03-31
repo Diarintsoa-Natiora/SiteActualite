@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 session_start();
 
-require_once __DIR__ . '/../services/article_repository.php';
+require_once __DIR__ . '/../services/site_feed_service.php';
+require_once __DIR__ . '/../helpers/article_presenter.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
 $currentUser = $_SESSION['user'] ?? null;
 $pageParam = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+
 $articlesData = getPublishedArticles($pageParam, 6);
 $articles = $articlesData['items'];
 $pagination = $articlesData['pagination'];
@@ -82,6 +84,13 @@ function latestArticleTimestamp(array $articles): ?string
 
     return $latest;
 }
+
+$feed = getSiteFeed($pageParam, 6);
+$featuredArticle = $feed['featured'];
+$listingArticles = $feed['listing'];
+$timelineArticles = $feed['timeline'];
+$pagination = $feed['pagination'];
+
 ?>
 <!doctype html>
 <html lang="fr">
@@ -168,9 +177,25 @@ function latestArticleTimestamp(array $articles): ?string
         <?php if ($timelineArticles): ?>
             <ul class="timeline">
                 <?php foreach ($timelineArticles as $article): ?>
-                    <li>
-                        <span><?= htmlspecialchars(formatArticleDate($article['published_at']), ENT_QUOTES, 'UTF-8') ?></span>
-                        <p><a href="<?= htmlspecialchars($article['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?></a></p>
+                    <?php
+                    $timelineImage = $article['cover_image_path'] ?? '';
+                    $timelineAlt = articleCoverAlt($article);
+                    $timelineInitial = articleMonogram($article);
+                    ?>
+                    <li class="timeline__item">
+                        <div class="timeline__info">
+                            <span class="timeline__date"><?= htmlspecialchars(formatArticleDate($article['published_at']), ENT_QUOTES, 'UTF-8') ?></span>
+                            <p class="timeline__title"><a href="<?= htmlspecialchars($article['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?></a></p>
+                        </div>
+                        <?php if ($timelineImage !== ''): ?>
+                            <span class="timeline__thumb">
+                                <img src="<?= htmlspecialchars($timelineImage, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($timelineAlt, ENT_QUOTES, 'UTF-8') ?>">
+                            </span>
+                        <?php else: ?>
+                            <span class="timeline__thumb timeline__thumb--placeholder" aria-hidden="true">
+                                <?= htmlspecialchars($timelineInitial, ENT_QUOTES, 'UTF-8') ?>
+                            </span>
+                        <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
             </ul>

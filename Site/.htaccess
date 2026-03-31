@@ -17,6 +17,7 @@ RewriteRule ^site$ pages/site.php [L,QSA,NC]
 RewriteRule ^redaction$ pages/backoffice_article.php [L,QSA,NC]
 RewriteRule ^backoffice$ pages/backoffice_articles.php [L,QSA,NC]
 
+
 # Fallback to home page
 RewriteRule ^$ pages/home.php [L]
 
@@ -44,3 +45,7 @@ RewriteRule ^$ pages/home.php [L]
 <IfModule mod_headers.c>
 	Header append Vary Accept-Encoding
 </IfModule>
+
+# Fallback to site vitrine
+RewriteRule ^$ pages/site.php [L]
+
