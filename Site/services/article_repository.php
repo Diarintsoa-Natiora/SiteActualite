@@ -27,6 +27,7 @@ function getPublishedArticles(int $page, int $perPage = 6): array
                 a.meta_description,
                 a.content,
                 a.published_at,
+            a.updated_at,
                 u.name AS author_name,
                 (SELECT m.file_path FROM media m WHERE m.id_article = a.id ORDER BY m.id DESC LIMIT 1) AS cover_image_path,
                 (SELECT m.alt_text FROM media m WHERE m.id_article = a.id ORDER BY m.id DESC LIMIT 1) AS cover_image_alt
@@ -75,6 +76,7 @@ function findPublishedArticle(int $id, string $slug): ?array
                 a.meta_description,
                 a.content,
                 a.published_at,
+            a.updated_at,
                 u.name AS author_name,
                 (SELECT m.file_path FROM media m WHERE m.id_article = a.id ORDER BY m.id DESC LIMIT 1) AS cover_image_path,
                 (SELECT m.alt_text FROM media m WHERE m.id_article = a.id ORDER BY m.id DESC LIMIT 1) AS cover_image_alt

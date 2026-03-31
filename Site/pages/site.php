@@ -5,16 +5,56 @@ session_start();
 
 require_once __DIR__ . '/../services/site_feed_service.php';
 require_once __DIR__ . '/../helpers/article_presenter.php';
+require_once __DIR__ . '/../helpers/assets.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
 $currentUser = $_SESSION['user'] ?? null;
 $pageParam = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+
+$articlesData = getPublishedArticles($pageParam, 6);
+$articles = $articlesData['items'];
+$pagination = $articlesData['pagination'];
+$featuredArticle = $articles[0] ?? null;
+$listingArticles = $featuredArticle ? array_slice($articles, 1) : $articles;
+$timelineArticles = array_slice($articles, 0, 3);
+$lastUpdatedAt = latestArticleTimestamp($articles);
+
+if ($lastUpdatedAt) {
+    $lastModified = (new DateTimeImmutable($lastUpdatedAt))
+        ->setTimezone(new DateTimeZone('UTC'))
+        ->format('D, d M Y H:i:s') . ' GMT';
+    header('Last-Modified: ' . $lastModified);
+    header('ETag: "site-' . sha1($pageParam . '|' . $lastModified) . '"');
+}
+
+header('Cache-Control: public, max-age=60, s-maxage=180');
+header('Vary: Accept-Encoding');
+
+function latestArticleTimestamp(array $articles): ?string
+{
+    $latest = null;
+
+    foreach ($articles as $article) {
+        foreach (['updated_at', 'published_at'] as $key) {
+            if (!empty($article[$key])) {
+                $candidate = $article[$key];
+                if ($latest === null || strtotime($candidate) > strtotime((string) $latest)) {
+                    $latest = $candidate;
+                }
+            }
+        }
+    }
+
+    return $latest;
+}
+
 $feed = getSiteFeed($pageParam, 6);
 $featuredArticle = $feed['featured'];
 $listingArticles = $feed['listing'];
 $timelineArticles = $feed['timeline'];
 $pagination = $feed['pagination'];
+
 ?>
 <!doctype html>
 <html lang="fr">
@@ -23,7 +63,7 @@ $pagination = $feed['pagination'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iran Focus · Actualités</title>
     <meta name="description" content="Articles analysant la guerre en Iran avec un angle diplomatique, économique et terrain.">
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(stylesheetHref(), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="page page--site">
 <header class="masthead masthead--solid">

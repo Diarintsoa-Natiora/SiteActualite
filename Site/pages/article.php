@@ -4,6 +4,7 @@ declare(strict_types=1);
 session_start();
 
 require_once __DIR__ . '/../services/article_repository.php';
+require_once __DIR__ . '/../helpers/assets.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -13,8 +14,21 @@ $article = findPublishedArticle($id, $slug);
 $currentUser = $_SESSION['user'] ?? null;
 
 if (!$article) {
+    header('Cache-Control: no-store, max-age=0');
     http_response_code(404);
+} else {
+    $lastUpdateValue = $article['updated_at'] ?? $article['published_at'] ?? null;
+    if ($lastUpdateValue) {
+        $lastModified = (new DateTimeImmutable($lastUpdateValue))
+            ->setTimezone(new DateTimeZone('UTC'))
+            ->format('D, d M Y H:i:s') . ' GMT';
+        header('Last-Modified: ' . $lastModified);
+        header('ETag: "article-' . $article['id'] . '-' . sha1($article['slug'] . '|' . $lastModified) . '"');
+    }
+    header('Cache-Control: public, max-age=120, s-maxage=600');
 }
+
+header('Vary: Accept-Encoding');
 
 function articleMetaDescription(?array $article): string
 {
@@ -51,7 +65,7 @@ $articleDate = $article ? (new DateTimeImmutable($article['published_at']))->for
     <?php if ($article): ?>
         <link rel="canonical" href="<?= htmlspecialchars($article['url'], ENT_QUOTES, 'UTF-8') ?>">
     <?php endif; ?>
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(stylesheetHref(), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="page page--site">
 <header class="masthead masthead--solid">
