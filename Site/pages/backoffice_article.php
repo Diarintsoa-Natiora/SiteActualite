@@ -77,7 +77,7 @@ if ($isAdmin) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Back-office · Administration</title>
     <link rel="stylesheet" href="<?= htmlspecialchars(stylesheetHref(), ENT_QUOTES, 'UTF-8') ?>">
-    <script src="https://cdn.tiny.cloud/1/<?= rawurlencode($tinyApiKey) ?>/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="/assets/js/tinymce_8.4.0/tinymce/js/tinymce/tinymce.min.js" referrerpolicy="no-referrer"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             tinymce.init({
@@ -86,7 +86,10 @@ if ($isAdmin) {
                 menubar: false,
                 plugins: 'link lists image media table autoresize code',
                 toolbar: 'undo redo | styleselect | bold italic underline | bullist numlist | link image media | code',
-                content_style: 'body { font-family: Space Grotesk, sans-serif; }'
+                content_style: 'body { font-family: Space Grotesk, sans-serif; }',
+                base_url: '/assets/js/tinymce_8.4.0/tinymce/js/tinymce',
+                suffix: '.min',
+                license_key: 'gpl'
             });
         });
     </script>
