@@ -15,6 +15,7 @@ RewriteRule ^deconnexion$ pages/logout.php [L,QSA,NC]
 RewriteRule ^bienvenue$ pages/welcome.php [L,QSA,NC]
 RewriteRule ^site$ pages/site.php [L,QSA,NC]
 RewriteRule ^redaction$ pages/backoffice_article.php [L,QSA,NC]
+RewriteRule ^backoffice$ pages/backoffice_articles.php [L,QSA,NC]
 
 # Fallback to home page
 RewriteRule ^$ pages/home.php [L]
