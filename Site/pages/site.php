@@ -3,55 +3,18 @@ declare(strict_types=1);
 
 session_start();
 
-require_once __DIR__ . '/../services/article_repository.php';
+require_once __DIR__ . '/../services/site_feed_service.php';
+require_once __DIR__ . '/../helpers/article_presenter.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
 $currentUser = $_SESSION['user'] ?? null;
 $pageParam = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$articlesData = getPublishedArticles($pageParam, 6);
-$articles = $articlesData['items'];
-$pagination = $articlesData['pagination'];
-$featuredArticle = $articles[0] ?? null;
-$listingArticles = $featuredArticle ? array_slice($articles, 1) : $articles;
-$timelineArticles = array_slice($articles, 0, 3);
-
-function formatArticlePreview(array $article): string
-{
-    $candidate = $article['meta_description'] ?: strip_tags($article['content']);
-    $candidate = preg_replace('/\s+/', ' ', $candidate);
-    $candidate = trim((string) $candidate);
-
-    if ($candidate === '') {
-        return 'Contenu en cours de préparation.';
-    }
-
-    if (mb_strlen($candidate) > 200) {
-        $candidate = mb_substr($candidate, 0, 200) . '…';
-    }
-
-    return $candidate;
-}
-
-function formatArticleDate(?string $date): string
-{
-    if (!$date) {
-        return '';
-    }
-
-    return (new DateTimeImmutable($date))->format('d M Y · H\hi');
-}
-
-function articleCoverAlt(array $article): string
-{
-    $alt = $article['cover_image_alt'] ?? '';
-
-    if ($alt === '' && isset($article['title'])) {
-        $alt = $article['title'];
-    }
-
-    return $alt;
-}
+$feed = getSiteFeed($pageParam, 6);
+$featuredArticle = $feed['featured'];
+$listingArticles = $feed['listing'];
+$timelineArticles = $feed['timeline'];
+$pagination = $feed['pagination'];
 ?>
 <!doctype html>
 <html lang="fr">
@@ -138,9 +101,25 @@ function articleCoverAlt(array $article): string
         <?php if ($timelineArticles): ?>
             <ul class="timeline">
                 <?php foreach ($timelineArticles as $article): ?>
-                    <li>
-                        <span><?= htmlspecialchars(formatArticleDate($article['published_at']), ENT_QUOTES, 'UTF-8') ?></span>
-                        <p><a href="<?= htmlspecialchars($article['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?></a></p>
+                    <?php
+                    $timelineImage = $article['cover_image_path'] ?? '';
+                    $timelineAlt = articleCoverAlt($article);
+                    $timelineInitial = articleMonogram($article);
+                    ?>
+                    <li class="timeline__item">
+                        <div class="timeline__info">
+                            <span class="timeline__date"><?= htmlspecialchars(formatArticleDate($article['published_at']), ENT_QUOTES, 'UTF-8') ?></span>
+                            <p class="timeline__title"><a href="<?= htmlspecialchars($article['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($article['title'], ENT_QUOTES, 'UTF-8') ?></a></p>
+                        </div>
+                        <?php if ($timelineImage !== ''): ?>
+                            <span class="timeline__thumb">
+                                <img src="<?= htmlspecialchars($timelineImage, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($timelineAlt, ENT_QUOTES, 'UTF-8') ?>">
+                            </span>
+                        <?php else: ?>
+                            <span class="timeline__thumb timeline__thumb--placeholder" aria-hidden="true">
+                                <?= htmlspecialchars($timelineInitial, ENT_QUOTES, 'UTF-8') ?>
+                            </span>
+                        <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
             </ul>

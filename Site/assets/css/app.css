@@ -290,14 +290,54 @@ a {
 
 .timeline li {
     display: flex;
-    gap: 1.5rem;
-    padding: 0.65rem 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
     border-bottom: 1px solid var(--border);
 }
 
-.timeline span {
+.timeline__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.timeline__date {
     color: var(--muted);
-    min-width: 70px;
+    font-size: 0.85rem;
+}
+
+.timeline__title {
+    margin: 0;
+}
+
+.timeline__thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.6);
+}
+
+.timeline__thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.timeline__thumb--placeholder {
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    background: rgba(249, 115, 22, 0.12);
+    border-color: rgba(249, 115, 22, 0.4);
 }
 
 .feed__header {

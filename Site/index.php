@@ -1,3 +1,3 @@
 <?php
-// Point d'entrée : réutilise la page d'accueil principale.
-require __DIR__ . '/pages/home.php';
+// Point d'entrée : charge directement la vitrine éditoriale.
+require __DIR__ . '/pages/site.php';
