@@ -13,8 +13,21 @@ $article = findPublishedArticle($id, $slug);
 $currentUser = $_SESSION['user'] ?? null;
 
 if (!$article) {
+    header('Cache-Control: no-store, max-age=0');
     http_response_code(404);
+} else {
+    $lastUpdateValue = $article['updated_at'] ?? $article['published_at'] ?? null;
+    if ($lastUpdateValue) {
+        $lastModified = (new DateTimeImmutable($lastUpdateValue))
+            ->setTimezone(new DateTimeZone('UTC'))
+            ->format('D, d M Y H:i:s') . ' GMT';
+        header('Last-Modified: ' . $lastModified);
+        header('ETag: "article-' . $article['id'] . '-' . sha1($article['slug'] . '|' . $lastModified) . '"');
+    }
+    header('Cache-Control: public, max-age=120, s-maxage=600');
 }
+
+header('Vary: Accept-Encoding');
 
 function articleMetaDescription(?array $article): string
 {

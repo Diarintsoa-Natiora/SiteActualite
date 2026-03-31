@@ -15,6 +15,18 @@ $pagination = $articlesData['pagination'];
 $featuredArticle = $articles[0] ?? null;
 $listingArticles = $featuredArticle ? array_slice($articles, 1) : $articles;
 $timelineArticles = array_slice($articles, 0, 3);
+$lastUpdatedAt = latestArticleTimestamp($articles);
+
+if ($lastUpdatedAt) {
+    $lastModified = (new DateTimeImmutable($lastUpdatedAt))
+        ->setTimezone(new DateTimeZone('UTC'))
+        ->format('D, d M Y H:i:s') . ' GMT';
+    header('Last-Modified: ' . $lastModified);
+    header('ETag: "site-' . sha1($pageParam . '|' . $lastModified) . '"');
+}
+
+header('Cache-Control: public, max-age=60, s-maxage=180');
+header('Vary: Accept-Encoding');
 
 function formatArticlePreview(array $article): string
 {
@@ -51,6 +63,24 @@ function articleCoverAlt(array $article): string
     }
 
     return $alt;
+}
+
+function latestArticleTimestamp(array $articles): ?string
+{
+    $latest = null;
+
+    foreach ($articles as $article) {
+        foreach (['updated_at', 'published_at'] as $key) {
+            if (!empty($article[$key])) {
+                $candidate = $article[$key];
+                if ($latest === null || strtotime($candidate) > strtotime((string) $latest)) {
+                    $latest = $candidate;
+                }
+            }
+        }
+    }
+
+    return $latest;
 }
 ?>
 <!doctype html>
