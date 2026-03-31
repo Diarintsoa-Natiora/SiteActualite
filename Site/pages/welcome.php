@@ -5,6 +5,8 @@ session_start();
 
 header('Content-Type: text/html; charset=utf-8');
 
+require_once __DIR__ . '/../helpers/assets.php';
+
 $currentUser = $_SESSION['user'] ?? null;
 
 if (!$currentUser) {
@@ -24,7 +26,7 @@ unset($_SESSION['flash_error']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenue <?= htmlspecialchars($currentUser['name'], ENT_QUOTES, 'UTF-8') ?></title>
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(stylesheetHref(), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="page page--dashboard">
 <header class="masthead masthead--solid">

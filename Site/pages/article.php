@@ -4,6 +4,7 @@ declare(strict_types=1);
 session_start();
 
 require_once __DIR__ . '/../services/article_repository.php';
+require_once __DIR__ . '/../helpers/assets.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -64,7 +65,7 @@ $articleDate = $article ? (new DateTimeImmutable($article['published_at']))->for
     <?php if ($article): ?>
         <link rel="canonical" href="<?= htmlspecialchars($article['url'], ENT_QUOTES, 'UTF-8') ?>">
     <?php endif; ?>
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(stylesheetHref(), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="page page--site">
 <header class="masthead masthead--solid">

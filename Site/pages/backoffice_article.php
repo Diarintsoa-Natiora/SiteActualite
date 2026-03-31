@@ -5,6 +5,7 @@ declare(strict_types=1);
 session_start();
 
 require_once __DIR__ . '/../services/article_service.php';
+require_once __DIR__ . '/../helpers/assets.php';
 
 $currentUser = $_SESSION['user'] ?? null;
 
@@ -75,7 +76,7 @@ if ($isAdmin) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Back-office · Administration</title>
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(stylesheetHref(), ENT_QUOTES, 'UTF-8') ?>">
     <script src="https://cdn.tiny.cloud/1/<?= rawurlencode($tinyApiKey) ?>/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

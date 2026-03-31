@@ -5,6 +5,7 @@ session_start();
 
 require_once __DIR__ . '/../services/site_feed_service.php';
 require_once __DIR__ . '/../helpers/article_presenter.php';
+require_once __DIR__ . '/../helpers/assets.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -29,43 +30,6 @@ if ($lastUpdatedAt) {
 
 header('Cache-Control: public, max-age=60, s-maxage=180');
 header('Vary: Accept-Encoding');
-
-function formatArticlePreview(array $article): string
-{
-    $candidate = $article['meta_description'] ?: strip_tags($article['content']);
-    $candidate = preg_replace('/\s+/', ' ', $candidate);
-    $candidate = trim((string) $candidate);
-
-    if ($candidate === '') {
-        return 'Contenu en cours de préparation.';
-    }
-
-    if (mb_strlen($candidate) > 200) {
-        $candidate = mb_substr($candidate, 0, 200) . '…';
-    }
-
-    return $candidate;
-}
-
-function formatArticleDate(?string $date): string
-{
-    if (!$date) {
-        return '';
-    }
-
-    return (new DateTimeImmutable($date))->format('d M Y · H\hi');
-}
-
-function articleCoverAlt(array $article): string
-{
-    $alt = $article['cover_image_alt'] ?? '';
-
-    if ($alt === '' && isset($article['title'])) {
-        $alt = $article['title'];
-    }
-
-    return $alt;
-}
 
 function latestArticleTimestamp(array $articles): ?string
 {
@@ -99,7 +63,7 @@ $pagination = $feed['pagination'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iran Focus · Actualités</title>
     <meta name="description" content="Articles analysant la guerre en Iran avec un angle diplomatique, économique et terrain.">
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(stylesheetHref(), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="page page--site">
 <header class="masthead masthead--solid">
